@@ -14,7 +14,7 @@ import {
   Package,
   Receipt,
   CreditCard,
-  ArrowsUpDown,
+  ArrowUpDown,
   FileUp
 } from "lucide-react";
 
