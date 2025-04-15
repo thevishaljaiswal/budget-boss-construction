@@ -4,7 +4,7 @@ import { useAppContext } from "@/context/AppContext";
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Trash2, Save } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/utils/formatters";
 import {
@@ -27,66 +27,157 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { generateUniqueId } from "@/utils/formatters";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { PurchaseRequest } from "@/types";
+
+interface PurchaseRequestItem {
+  id: string;
+  requestType: "Material" | "Service";
+  description: string;
+  quantity: number;
+  budgetItemId: string;
+  costCodeReference: string;
+  justification: string;
+}
 
 const PurchaseRequestsPage: React.FC = () => {
   const { purchaseRequests, projects, budgetItems, addPurchaseRequest } = useAppContext();
   const [open, setOpen] = useState(false);
   
-  // Form state for new purchase request
-  const [newPR, setNewPR] = useState({
+  // Form state for new purchase request header
+  const [prHeader, setPrHeader] = useState({
     projectId: "",
-    requestType: "Material",
     requesterName: "",
     requiredByDate: "",
-    costCodeReference: "",
-    budgetItemId: "",
-    quantity: 1,
-    justification: "",
   });
   
-  const handleInputChange = (
+  // Form state for purchase request items (multiple entries)
+  const [prItems, setPrItems] = useState<PurchaseRequestItem[]>([
+    {
+      id: generateUniqueId(),
+      requestType: "Material",
+      description: "",
+      quantity: 1,
+      budgetItemId: "",
+      costCodeReference: "",
+      justification: "",
+    },
+  ]);
+  
+  const handleHeaderChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setNewPR((prev) => ({ ...prev, [name]: value }));
+    setPrHeader((prev) => ({ ...prev, [name]: value }));
   };
   
-  const handleSelectChange = (name: string, value: string) => {
-    setNewPR((prev) => ({ ...prev, [name]: value }));
+  const handleHeaderSelectChange = (name: string, value: string) => {
+    setPrHeader((prev) => ({ ...prev, [name]: value }));
+  };
+  
+  const handleItemChange = (
+    id: string,
+    field: keyof PurchaseRequestItem,
+    value: string | number
+  ) => {
+    setPrItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    );
+  };
+  
+  const addNewItem = () => {
+    setPrItems((prev) => [
+      ...prev,
+      {
+        id: generateUniqueId(),
+        requestType: "Material",
+        description: "",
+        quantity: 1,
+        budgetItemId: "",
+        costCodeReference: "",
+        justification: "",
+      },
+    ]);
+  };
+  
+  const removeItem = (id: string) => {
+    if (prItems.length > 1) {
+      setPrItems((prev) => prev.filter((item) => item.id !== id));
+    }
   };
   
   const handleCreatePR = () => {
     const currentDate = new Date().toISOString().split("T")[0];
     
-    const purchaseRequest = {
-      id: generateUniqueId(),
-      ...newPR,
-      requestDate: currentDate,
-      attachments: [] as string[],
-      status: "Pending Approval" as const,
-      quantity: Number(newPR.quantity),
-    };
+    // Create individual PRs for each item
+    prItems.forEach((item) => {
+      const purchaseRequest: PurchaseRequest = {
+        id: generateUniqueId(),
+        projectId: prHeader.projectId,
+        requestType: item.requestType,
+        requesterName: prHeader.requesterName,
+        requestDate: currentDate,
+        requiredByDate: prHeader.requiredByDate,
+        costCodeReference: item.costCodeReference,
+        budgetItemId: item.budgetItemId,
+        quantity: Number(item.quantity),
+        justification: item.justification,
+        attachments: [],
+        status: "Pending Approval",
+      };
+      
+      addPurchaseRequest(purchaseRequest);
+    });
     
-    addPurchaseRequest(purchaseRequest);
     setOpen(false);
     
     // Reset form
-    setNewPR({
+    setPrHeader({
       projectId: "",
-      requestType: "Material",
       requesterName: "",
       requiredByDate: "",
-      costCodeReference: "",
-      budgetItemId: "",
-      quantity: 1,
-      justification: "",
     });
+    
+    setPrItems([
+      {
+        id: generateUniqueId(),
+        requestType: "Material",
+        description: "",
+        quantity: 1,
+        budgetItemId: "",
+        costCodeReference: "",
+        justification: "",
+      },
+    ]);
   };
   
-  const selectedProject = projects.find(p => p.id === newPR.projectId);
+  const selectedProject = projects.find(p => p.id === prHeader.projectId);
   const projectBudgetItems = selectedProject 
     ? budgetItems.filter(item => item.projectId === selectedProject.id)
     : [];
+  
+  const isFormValid = () => {
+    if (!prHeader.projectId || !prHeader.requesterName || !prHeader.requiredByDate) {
+      return false;
+    }
+    
+    return prItems.every(
+      (item) =>
+        item.budgetItemId && 
+        item.costCodeReference && 
+        item.quantity > 0 &&
+        item.description
+    );
+  };
   
   return (
     <div className="space-y-8">
@@ -101,144 +192,188 @@ const PurchaseRequestsPage: React.FC = () => {
                 New Request
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="sm:max-w-[800px] max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create Purchase Request</DialogTitle>
                 <DialogDescription>
-                  Complete the form below to create a new purchase request. This will be subject to budget availability.
+                  Complete the form below to create a new purchase request with multiple items. Items will be subject to budget availability.
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="projectId" className="text-right">
-                    Project
-                  </Label>
-                  <div className="col-span-3">
-                    <Select
-                      value={newPR.projectId}
-                      onValueChange={(value) => handleSelectChange("projectId", value)}
-                    >
-                      <SelectTrigger id="projectId">
-                        <SelectValue placeholder="Select a project" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {projects.map((project) => (
-                          <SelectItem key={project.id} value={project.id}>
-                            {project.name} ({project.code})
-                          </SelectItem>
+              <div className="space-y-6 py-4">
+                {/* Header Section */}
+                <div className="space-y-4 rounded-md border p-4">
+                  <h3 className="text-lg font-medium">Request Details</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="projectId">Project</Label>
+                      <Select
+                        value={prHeader.projectId}
+                        onValueChange={(value) => handleHeaderSelectChange("projectId", value)}
+                      >
+                        <SelectTrigger id="projectId">
+                          <SelectValue placeholder="Select a project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {projects.map((project) => (
+                            <SelectItem key={project.id} value={project.id}>
+                              {project.name} ({project.code})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="requesterName">Requester Name</Label>
+                      <Input
+                        id="requesterName"
+                        name="requesterName"
+                        value={prHeader.requesterName}
+                        onChange={handleHeaderChange}
+                        placeholder="Your name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="requiredByDate">Required By</Label>
+                      <Input
+                        id="requiredByDate"
+                        name="requiredByDate"
+                        type="date"
+                        value={prHeader.requiredByDate}
+                        onChange={handleHeaderChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Items Table Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-medium">Request Items</h3>
+                    <Button onClick={addNewItem} size="sm">
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Add Item
+                    </Button>
+                  </div>
+                  
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead>Budget Item</TableHead>
+                          <TableHead>Cost Code</TableHead>
+                          <TableHead>Qty</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {prItems.map((item) => (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              <Select
+                                value={item.requestType}
+                                onValueChange={(value) => 
+                                  handleItemChange(item.id, "requestType", value as "Material" | "Service")
+                                }
+                              >
+                                <SelectTrigger id={`requestType-${item.id}`} className="w-full">
+                                  <SelectValue placeholder="Type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Material">Material</SelectItem>
+                                  <SelectItem value="Service">Service</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={item.description}
+                                onChange={(e) => 
+                                  handleItemChange(item.id, "description", e.target.value)
+                                }
+                                placeholder="Item description"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={item.budgetItemId}
+                                onValueChange={(value) => 
+                                  handleItemChange(item.id, "budgetItemId", value)
+                                }
+                                disabled={!prHeader.projectId}
+                              >
+                                <SelectTrigger id={`budgetItem-${item.id}`} className="w-full">
+                                  <SelectValue 
+                                    placeholder={
+                                      !prHeader.projectId 
+                                        ? "Select project first" 
+                                        : "Select budget item"
+                                    } 
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {projectBudgetItems.map((budgetItem) => (
+                                    <SelectItem key={budgetItem.id} value={budgetItem.id}>
+                                      {budgetItem.description}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={item.costCodeReference}
+                                onChange={(e) => 
+                                  handleItemChange(item.id, "costCodeReference", e.target.value)
+                                }
+                                placeholder="e.g., HVR-001"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) => 
+                                  handleItemChange(item.id, "quantity", parseInt(e.target.value))
+                                }
+                                className="w-16"
+                                min={1}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeItem(item.id)}
+                                disabled={prItems.length === 1}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </TableBody>
+                    </Table>
                   </div>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="requestType" className="text-right">
-                    Request Type
-                  </Label>
-                  <div className="col-span-3">
-                    <Select
-                      value={newPR.requestType}
-                      onValueChange={(value) => handleSelectChange("requestType", value)}
-                    >
-                      <SelectTrigger id="requestType">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Material">Material</SelectItem>
-                        <SelectItem value="Service">Service</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  
+                  {/* Justification Section */}
+                  <div className="space-y-2">
+                    <Label htmlFor="justification">Justification</Label>
+                    <Textarea
+                      id="justification"
+                      placeholder="Explain why these items are needed..."
+                      className="min-h-[80px]"
+                      value={prItems[0].justification}
+                      onChange={(e) => {
+                        // Apply same justification to all items
+                        const justification = e.target.value;
+                        setPrItems((prev) =>
+                          prev.map((item) => ({ ...item, justification }))
+                        );
+                      }}
+                    />
                   </div>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="requesterName" className="text-right">
-                    Requester Name
-                  </Label>
-                  <Input
-                    id="requesterName"
-                    name="requesterName"
-                    value={newPR.requesterName}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="requiredByDate" className="text-right">
-                    Required By
-                  </Label>
-                  <Input
-                    id="requiredByDate"
-                    name="requiredByDate"
-                    type="date"
-                    value={newPR.requiredByDate}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="costCodeReference" className="text-right">
-                    Cost Code
-                  </Label>
-                  <Input
-                    id="costCodeReference"
-                    name="costCodeReference"
-                    value={newPR.costCodeReference}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                    placeholder="e.g., HVR-2023-CIVIL-001"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="budgetItemId" className="text-right">
-                    Budget Item
-                  </Label>
-                  <div className="col-span-3">
-                    <Select
-                      value={newPR.budgetItemId}
-                      onValueChange={(value) => handleSelectChange("budgetItemId", value)}
-                      disabled={!newPR.projectId}
-                    >
-                      <SelectTrigger id="budgetItemId">
-                        <SelectValue placeholder={!newPR.projectId ? "Select a project first" : "Select budget item"} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {projectBudgetItems.map((item) => (
-                          <SelectItem key={item.id} value={item.id}>
-                            {item.description}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="quantity" className="text-right">
-                    Quantity
-                  </Label>
-                  <Input
-                    id="quantity"
-                    name="quantity"
-                    type="number"
-                    value={newPR.quantity}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                    min={1}
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-start gap-4">
-                  <Label htmlFor="justification" className="text-right pt-2">
-                    Justification
-                  </Label>
-                  <Textarea
-                    id="justification"
-                    name="justification"
-                    value={newPR.justification}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                    placeholder="Explain why this purchase is needed"
-                    rows={3}
-                  />
                 </div>
               </div>
               <DialogFooter>
@@ -247,13 +382,9 @@ const PurchaseRequestsPage: React.FC = () => {
                 </Button>
                 <Button
                   onClick={handleCreatePR}
-                  disabled={
-                    !newPR.projectId ||
-                    !newPR.requesterName ||
-                    !newPR.requiredByDate ||
-                    !newPR.budgetItemId
-                  }
+                  disabled={!isFormValid()}
                 >
+                  <Save className="mr-2 h-4 w-4" />
                   Create Purchase Request
                 </Button>
               </DialogFooter>
@@ -274,50 +405,50 @@ const PurchaseRequestsPage: React.FC = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Project</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Request Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Requester</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Request Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Required By</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Project</TableHead>
+                    <TableHead>Request Type</TableHead>
+                    <TableHead>Requester</TableHead>
+                    <TableHead>Request Date</TableHead>
+                    <TableHead>Required By</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {purchaseRequests.map((pr) => (
-                    <tr key={pr.id} className="border-b hover:bg-secondary/30">
-                      <td className="px-4 py-3">
+                    <TableRow key={pr.id}>
+                      <TableCell>
                         {projects.find(p => p.id === pr.projectId)?.name || 'Unknown'}
-                      </td>
-                      <td className="px-4 py-3">{pr.requestType}</td>
-                      <td className="px-4 py-3">{pr.requesterName}</td>
-                      <td className="px-4 py-3">{formatDate(pr.requestDate)}</td>
-                      <td className="px-4 py-3">{formatDate(pr.requiredByDate)}</td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell>{pr.requestType}</TableCell>
+                      <TableCell>{pr.requesterName}</TableCell>
+                      <TableCell>{formatDate(pr.requestDate)}</TableCell>
+                      <TableCell>{formatDate(pr.requiredByDate)}</TableCell>
+                      <TableCell>
                         <Badge variant={
-                          pr.status === 'Approved' ? 'default' :
+                          pr.status === 'Approved' ? 'success' :
                           pr.status === 'Pending Approval' ? 'outline' :
                           pr.status === 'Converted to PO' ? 'success' :
                           pr.status === 'Rejected' ? 'destructive' : 'secondary'
                         }>
                           {pr.status}
                         </Badge>
-                      </td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell>
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="sm">View</Button>
                           {pr.status === 'Approved' && (
                             <Button size="sm">Create PO</Button>
                           )}
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>
