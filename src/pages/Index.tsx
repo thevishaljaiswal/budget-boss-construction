@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import Dashboard from '@/pages/Dashboard';
 import ProjectsPage from '@/pages/ProjectsPage';
@@ -17,7 +17,7 @@ import NotFound from '@/pages/NotFound';
 const Index: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
+      <Route path="/" element={<MainLayout><Outlet /></MainLayout>}>
         <Route index element={<Dashboard />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
