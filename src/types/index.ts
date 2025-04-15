@@ -186,3 +186,21 @@ export interface AdvanceAdjustment {
   remainingAdvance: number;
   remarks?: string;
 }
+
+// Invoice Payment Types
+export interface InvoicePayment {
+  id: string;
+  invoiceId: string;
+  vendorId: string;
+  paymentDate: string;
+  paymentMode: 'NEFT' | 'RTGS' | 'Cheque' | 'UPI';
+  bankAccountDetails: string;
+  amountPaid: number;
+  referenceNo: string;
+  tdsAmount?: number;
+  otherDeductions?: number;
+  adjustmentAmount: number; // Amount adjusted from advances
+  netPaymentAmount: number; // Net amount paid after adjustments
+  paymentRemarks?: string;
+  status: 'Completed' | 'Pending' | 'Failed';
+}

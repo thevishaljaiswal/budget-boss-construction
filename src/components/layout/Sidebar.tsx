@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -14,7 +15,8 @@ import {
   Receipt,
   CreditCard,
   ArrowUpDown,
-  FileUp
+  FileUp,
+  Landmark
 } from "lucide-react";
 
 interface NavItemProps {
@@ -81,6 +83,14 @@ const Sidebar = () => {
               <NavItem href="/advance-requests" icon={FileUp} label="Advance Requests" />
               <NavItem href="/advance-payments" icon={CreditCard} label="Advance Payments" />
               <NavItem href="/advance-adjustments" icon={ArrowUpDown} label="Adjustments" />
+            </div>
+          </div>
+          <div className="mb-4">
+            <h2 className="px-3 text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider">
+              Payments
+            </h2>
+            <div className="mt-3 space-y-1">
+              <NavItem href="/invoice-payments" icon={Landmark} label="Invoice Payments" />
             </div>
           </div>
           <div className="mb-4">

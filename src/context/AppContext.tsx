@@ -10,7 +10,8 @@ import {
   Invoice,
   AdvanceRequest,
   AdvancePayment,
-  AdvanceAdjustment
+  AdvanceAdjustment,
+  InvoicePayment
 } from '@/types';
 import { 
   projects as initialProjects,
@@ -31,6 +32,7 @@ interface AppContextType {
   advanceRequests: AdvanceRequest[];
   advancePayments: AdvancePayment[];
   advanceAdjustments: AdvanceAdjustment[];
+  invoicePayments: InvoicePayment[];
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
   addProject: (project: Project) => void;
@@ -51,6 +53,8 @@ interface AppContextType {
   updateAdvancePayment: (updatedAdvancePayment: AdvancePayment) => void;
   addAdvanceAdjustment: (advanceAdjustment: AdvanceAdjustment) => void;
   updateAdvanceAdjustment: (updatedAdvanceAdjustment: AdvanceAdjustment) => void;
+  addInvoicePayment: (invoicePayment: InvoicePayment) => void;
+  updateInvoicePayment: (updatedInvoicePayment: InvoicePayment) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -66,6 +70,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [advanceRequests, setAdvanceRequests] = useState<AdvanceRequest[]>([]);
   const [advancePayments, setAdvancePayments] = useState<AdvancePayment[]>([]);
   const [advanceAdjustments, setAdvanceAdjustments] = useState<AdvanceAdjustment[]>([]);
+  const [invoicePayments, setInvoicePayments] = useState<InvoicePayment[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(projects[0] || null);
 
   const addProject = (project: Project) => {
@@ -197,6 +202,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  // Add functions for invoice payments
+  const addInvoicePayment = (invoicePayment: InvoicePayment) => {
+    setInvoicePayments([...invoicePayments, invoicePayment]);
+    
+    // Update the status of the related invoice to 'Paid'
+    const relatedInvoice = invoices.find(inv => inv.id === invoicePayment.invoiceId);
+    if (relatedInvoice) {
+      updateInvoice({
+        ...relatedInvoice,
+        status: 'Paid'
+      });
+    }
+  };
+
+  const updateInvoicePayment = (updatedInvoicePayment: InvoicePayment) => {
+    setInvoicePayments(
+      invoicePayments.map((ip) =>
+        ip.id === updatedInvoicePayment.id ? updatedInvoicePayment : ip
+      )
+    );
+  };
+
   const value = useMemo(
     () => ({
       projects,
@@ -209,6 +236,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       advanceRequests,
       advancePayments,
       advanceAdjustments,
+      invoicePayments,
       selectedProject,
       setSelectedProject,
       addProject,
@@ -229,6 +257,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateAdvancePayment,
       addAdvanceAdjustment,
       updateAdvanceAdjustment,
+      addInvoicePayment,
+      updateInvoicePayment,
     }),
     [
       projects,
@@ -241,6 +271,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       advanceRequests,
       advancePayments,
       advanceAdjustments,
+      invoicePayments,
       selectedProject,
     ]
   );

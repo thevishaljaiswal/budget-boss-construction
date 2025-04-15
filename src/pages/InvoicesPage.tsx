@@ -17,13 +17,15 @@ import { formatCurrency, formatDate } from "@/utils/formatters";
 import { Card, CardContent } from "@/components/ui/card";
 import InvoiceForm from "@/components/forms/InvoiceForm";
 import AdvanceAdjustmentForm from "@/components/forms/AdvanceAdjustmentForm";
+import InvoicePaymentForm from "@/components/forms/InvoicePaymentForm";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Landmark } from "lucide-react";
 
 const InvoicesPage = () => {
   const { invoices, vendors, purchaseOrders, advancePayments, advanceAdjustments } = useAppContext();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [adjustmentDialogOpen, setAdjustmentDialogOpen] = useState(false);
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>(undefined);
 
   const getVendorName = (vendorId: string) => {
@@ -70,6 +72,11 @@ const InvoicesPage = () => {
   const handleAdjustmentClick = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setAdjustmentDialogOpen(true);
+  };
+
+  const handlePaymentClick = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    setPaymentDialogOpen(true);
   };
 
   return (
@@ -128,17 +135,30 @@ const InvoicesPage = () => {
                       <TableCell>{formatCurrency(netPayable)}</TableCell>
                       <TableCell>{getStatusBadge(invoice.status)}</TableCell>
                       <TableCell>
-                        {hasAvailableAdvances(invoice) && invoice.status !== "Paid" && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleAdjustmentClick(invoice)}
-                            className="flex items-center gap-1"
-                          >
-                            <CreditCard className="h-4 w-4" />
-                            <span>Adjust</span>
-                          </Button>
-                        )}
+                        <div className="flex gap-2">
+                          {hasAvailableAdvances(invoice) && invoice.status !== "Paid" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleAdjustmentClick(invoice)}
+                              className="flex items-center gap-1"
+                            >
+                              <CreditCard className="h-4 w-4" />
+                              <span>Adjust</span>
+                            </Button>
+                          )}
+                          {invoice.status !== "Paid" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handlePaymentClick(invoice)}
+                              className="flex items-center gap-1"
+                            >
+                              <Landmark className="h-4 w-4" />
+                              <span>Pay</span>
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -161,6 +181,16 @@ const InvoicesPage = () => {
           <AdvanceAdjustmentForm 
             invoice={selectedInvoice} 
             onComplete={() => setAdjustmentDialogOpen(false)} 
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Dialog */}
+      <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <InvoicePaymentForm 
+            invoice={selectedInvoice} 
+            onComplete={() => setPaymentDialogOpen(false)} 
           />
         </DialogContent>
       </Dialog>
