@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -81,7 +80,7 @@ const Sidebar = () => {
             <div className="mt-3 space-y-1">
               <NavItem href="/advance-requests" icon={FileUp} label="Advance Requests" />
               <NavItem href="/advance-payments" icon={CreditCard} label="Advance Payments" />
-              <NavItem href="/advance-adjustments" icon={ArrowsUpDown} label="Adjustments" />
+              <NavItem href="/advance-adjustments" icon={ArrowUpDown} label="Adjustments" />
             </div>
           </div>
           <div className="mb-4">
