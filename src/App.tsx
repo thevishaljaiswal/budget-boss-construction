@@ -13,6 +13,7 @@ import BudgetPage from "@/pages/BudgetPage";
 import PurchaseRequestsPage from "@/pages/PurchaseRequestsPage";
 import PurchaseOrdersPage from "@/pages/PurchaseOrdersPage";
 import WorkOrdersPage from "@/pages/WorkOrdersPage";
+import GoodsReceiptPage from "@/pages/GoodsReceiptPage";
 import VendorsPage from "@/pages/VendorsPage";
 import ReportsPage from "@/pages/ReportsPage";
 import NotFound from "@/pages/NotFound";
@@ -80,6 +81,14 @@ const App = () => (
               element={
                 <MainLayout>
                   <WorkOrdersPage />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/goods-receipts"
+              element={
+                <MainLayout>
+                  <GoodsReceiptPage />
                 </MainLayout>
               }
             />
