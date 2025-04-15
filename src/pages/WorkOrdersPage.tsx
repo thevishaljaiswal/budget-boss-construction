@@ -4,7 +4,7 @@ import { useAppContext } from "@/context/AppContext";
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, ClipboardCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 import { useNavigate } from "react-router-dom";
@@ -22,10 +22,16 @@ const WorkOrdersPage: React.FC = () => {
         title="Work Orders"
         description="Manage service and work orders for your construction projects."
         action={
-          <Button onClick={() => navigate('/purchase-orders')}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New Work Order
-          </Button>
+          <div className="flex space-x-2">
+            <Button onClick={() => navigate('/purchase-orders')}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New Work Order
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/goods-receipts')}>
+              <ClipboardCheck className="mr-2 h-4 w-4" />
+              Record Completion
+            </Button>
+          </div>
         }
       />
 
@@ -81,7 +87,7 @@ const WorkOrdersPage: React.FC = () => {
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="sm">View</Button>
                           {wo.status === 'Issued' && (
-                            <Button size="sm">Complete</Button>
+                            <Button size="sm" onClick={() => navigate('/goods-receipts')}>Complete</Button>
                           )}
                         </div>
                       </td>

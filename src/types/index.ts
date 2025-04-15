@@ -1,4 +1,3 @@
-
 // Project Types
 export interface Project {
   id: string;
@@ -111,6 +110,10 @@ export interface GoodsReceipt {
   receiptDate: string;
   receivedBy: string;
   remarks?: string;
+  attachments?: {
+    photos: boolean;
+    dsr: boolean;
+  };
 }
 
 export interface GoodsReceiptLine {
