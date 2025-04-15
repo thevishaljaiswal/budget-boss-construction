@@ -16,6 +16,9 @@ import WorkOrdersPage from "@/pages/WorkOrdersPage";
 import GoodsReceiptPage from "@/pages/GoodsReceiptPage";
 import VendorsPage from "@/pages/VendorsPage";
 import InvoicesPage from "@/pages/InvoicesPage";
+import AdvanceRequestsPage from "@/pages/AdvanceRequestsPage";
+import AdvancePaymentsPage from "@/pages/AdvancePaymentsPage";
+import AdvanceAdjustmentsPage from "@/pages/AdvanceAdjustmentsPage";
 import ReportsPage from "@/pages/ReportsPage";
 import NotFound from "@/pages/NotFound";
 
@@ -98,6 +101,30 @@ const App = () => (
               element={
                 <MainLayout>
                   <InvoicesPage />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/advance-requests"
+              element={
+                <MainLayout>
+                  <AdvanceRequestsPage />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/advance-payments"
+              element={
+                <MainLayout>
+                  <AdvancePaymentsPage />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/advance-adjustments"
+              element={
+                <MainLayout>
+                  <AdvanceAdjustmentsPage />
                 </MainLayout>
               }
             />

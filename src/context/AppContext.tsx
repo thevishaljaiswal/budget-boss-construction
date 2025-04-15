@@ -7,7 +7,10 @@ import {
   PurchaseOrder,
   Vendor,
   GoodsReceipt,
-  Invoice
+  Invoice,
+  AdvanceRequest,
+  AdvancePayment,
+  AdvanceAdjustment
 } from '@/types';
 import { 
   projects as initialProjects,
@@ -25,6 +28,9 @@ interface AppContextType {
   vendors: Vendor[];
   goodsReceipts: GoodsReceipt[];
   invoices: Invoice[];
+  advanceRequests: AdvanceRequest[];
+  advancePayments: AdvancePayment[];
+  advanceAdjustments: AdvanceAdjustment[];
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
   addProject: (project: Project) => void;
@@ -39,6 +45,12 @@ interface AppContextType {
   updateGoodsReceipt: (updatedGoodsReceipt: GoodsReceipt) => void;
   addInvoice: (invoice: Invoice) => void;
   updateInvoice: (updatedInvoice: Invoice) => void;
+  addAdvanceRequest: (advanceRequest: AdvanceRequest) => void;
+  updateAdvanceRequest: (updatedAdvanceRequest: AdvanceRequest) => void;
+  addAdvancePayment: (advancePayment: AdvancePayment) => void;
+  updateAdvancePayment: (updatedAdvancePayment: AdvancePayment) => void;
+  addAdvanceAdjustment: (advanceAdjustment: AdvanceAdjustment) => void;
+  updateAdvanceAdjustment: (updatedAdvanceAdjustment: AdvanceAdjustment) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -51,6 +63,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [vendors] = useState<Vendor[]>(initialVendors);
   const [goodsReceipts, setGoodsReceipts] = useState<GoodsReceipt[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [advanceRequests, setAdvanceRequests] = useState<AdvanceRequest[]>([]);
+  const [advancePayments, setAdvancePayments] = useState<AdvancePayment[]>([]);
+  const [advanceAdjustments, setAdvanceAdjustments] = useState<AdvanceAdjustment[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(projects[0] || null);
 
   const addProject = (project: Project) => {
@@ -124,6 +139,63 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       )
     );
   };
+  
+  // Add functions for advance requests
+  const addAdvanceRequest = (advanceRequest: AdvanceRequest) => {
+    setAdvanceRequests([...advanceRequests, advanceRequest]);
+  };
+
+  const updateAdvanceRequest = (updatedAdvanceRequest: AdvanceRequest) => {
+    setAdvanceRequests(
+      advanceRequests.map((ar) =>
+        ar.id === updatedAdvanceRequest.id ? updatedAdvanceRequest : ar
+      )
+    );
+  };
+
+  // Add functions for advance payments
+  const addAdvancePayment = (advancePayment: AdvancePayment) => {
+    setAdvancePayments([...advancePayments, advancePayment]);
+    
+    // Update the status of the related advance request to 'Paid'
+    const relatedRequest = advanceRequests.find(req => req.id === advancePayment.advanceRequestId);
+    if (relatedRequest) {
+      updateAdvanceRequest({
+        ...relatedRequest,
+        status: 'Paid'
+      });
+    }
+  };
+
+  const updateAdvancePayment = (updatedAdvancePayment: AdvancePayment) => {
+    setAdvancePayments(
+      advancePayments.map((ap) =>
+        ap.id === updatedAdvancePayment.id ? updatedAdvancePayment : ap
+      )
+    );
+  };
+
+  // Add functions for advance adjustments
+  const addAdvanceAdjustment = (advanceAdjustment: AdvanceAdjustment) => {
+    setAdvanceAdjustments([...advanceAdjustments, advanceAdjustment]);
+    
+    // Update the remaining amount in the related advance payment
+    const relatedPayment = advancePayments.find(payment => payment.id === advanceAdjustment.advancePaymentId);
+    if (relatedPayment) {
+      updateAdvancePayment({
+        ...relatedPayment,
+        remainingAmount: relatedPayment.remainingAmount - advanceAdjustment.adjustedAmount
+      });
+    }
+  };
+
+  const updateAdvanceAdjustment = (updatedAdvanceAdjustment: AdvanceAdjustment) => {
+    setAdvanceAdjustments(
+      advanceAdjustments.map((adj) =>
+        adj.id === updatedAdvanceAdjustment.id ? updatedAdvanceAdjustment : adj
+      )
+    );
+  };
 
   const value = useMemo(
     () => ({
@@ -134,6 +206,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       vendors,
       goodsReceipts,
       invoices,
+      advanceRequests,
+      advancePayments,
+      advanceAdjustments,
       selectedProject,
       setSelectedProject,
       addProject,
@@ -148,6 +223,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateGoodsReceipt,
       addInvoice,
       updateInvoice,
+      addAdvanceRequest,
+      updateAdvanceRequest,
+      addAdvancePayment,
+      updateAdvancePayment,
+      addAdvanceAdjustment,
+      updateAdvanceAdjustment,
     }),
     [
       projects,
@@ -157,6 +238,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       vendors,
       goodsReceipts,
       invoices,
+      advanceRequests,
+      advancePayments,
+      advanceAdjustments,
       selectedProject,
     ]
   );

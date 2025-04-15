@@ -1,3 +1,4 @@
+
 // Project Types
 export interface Project {
   id: string;
@@ -135,4 +136,53 @@ export interface Invoice {
   taxDeducted: number;
   paymentDueDate: string;
   status: 'Pending' | 'Approved' | 'Paid' | 'Disputed';
+}
+
+// Advance Request Types
+export interface AdvanceRequest {
+  id: string;
+  projectId: string;
+  requestedBy: string;
+  requestDate: string;
+  advanceType: 'Vendor' | 'Employee' | 'Subcontractor' | 'Petty Cash';
+  partyId: string; // Reference to vendor or employee ID
+  partyName: string; // Name of vendor or employee
+  purpose: string;
+  costCodeReference: string;
+  amountRequested: number;
+  expectedSettlementDate: string;
+  supportingDocs?: string[];
+  approvers: {
+    name: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
+  }[];
+  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'Paid';
+}
+
+// Advance Payment Types
+export interface AdvancePayment {
+  id: string;
+  advanceRequestId: string;
+  partyId: string;
+  partyName: string;
+  paymentMode: 'NEFT' | 'RTGS' | 'Cheque' | 'UPI';
+  bankAccountDetails: string;
+  paymentDate: string;
+  amountPaid: number;
+  referenceNo: string;
+  tdsAmount?: number;
+  otherDeductions?: number;
+  paymentRemarks?: string;
+  remainingAmount: number; // To track unused advance amount
+}
+
+// Advance Adjustment Types
+export interface AdvanceAdjustment {
+  id: string;
+  invoiceId: string;
+  advancePaymentId: string;
+  adjustedAmount: number;
+  adjustmentDate: string;
+  remainingAdvance: number;
+  remarks?: string;
 }

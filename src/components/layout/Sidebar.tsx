@@ -13,6 +13,9 @@ import {
   Users,
   Package,
   Receipt,
+  CreditCard,
+  ArrowsUpDown,
+  FileUp
 } from "lucide-react";
 
 interface NavItemProps {
@@ -69,6 +72,16 @@ const Sidebar = () => {
               <NavItem href="/work-orders" icon={FileText} label="Work Orders" />
               <NavItem href="/goods-receipts" icon={Package} label="Goods Receipts" />
               <NavItem href="/invoices" icon={Receipt} label="Invoices" />
+            </div>
+          </div>
+          <div className="mb-4">
+            <h2 className="px-3 text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider">
+              Advances
+            </h2>
+            <div className="mt-3 space-y-1">
+              <NavItem href="/advance-requests" icon={FileUp} label="Advance Requests" />
+              <NavItem href="/advance-payments" icon={CreditCard} label="Advance Payments" />
+              <NavItem href="/advance-adjustments" icon={ArrowsUpDown} label="Adjustments" />
             </div>
           </div>
           <div className="mb-4">
