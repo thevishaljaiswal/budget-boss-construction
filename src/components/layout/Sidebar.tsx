@@ -11,6 +11,8 @@ import {
   LayoutDashboard,
   ShoppingCart,
   Users,
+  Package,
+  Receipt,
 } from "lucide-react";
 
 interface NavItemProps {
@@ -65,6 +67,8 @@ const Sidebar = () => {
               <NavItem href="/purchase-requests" icon={ClipboardList} label="Purchase Requests" />
               <NavItem href="/purchase-orders" icon={ShoppingCart} label="Purchase Orders" />
               <NavItem href="/work-orders" icon={FileText} label="Work Orders" />
+              <NavItem href="/goods-receipts" icon={Package} label="Goods Receipts" />
+              <NavItem href="/invoices" icon={Receipt} label="Invoices" />
             </div>
           </div>
           <div className="mb-4">

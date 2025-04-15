@@ -6,7 +6,8 @@ import {
   PurchaseRequest, 
   PurchaseOrder,
   Vendor,
-  GoodsReceipt
+  GoodsReceipt,
+  Invoice
 } from '@/types';
 import { 
   projects as initialProjects,
@@ -23,6 +24,7 @@ interface AppContextType {
   purchaseOrders: PurchaseOrder[];
   vendors: Vendor[];
   goodsReceipts: GoodsReceipt[];
+  invoices: Invoice[];
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
   addProject: (project: Project) => void;
@@ -35,6 +37,8 @@ interface AppContextType {
   updatePurchaseOrder: (updatedPurchaseOrder: PurchaseOrder) => void;
   addGoodsReceipt: (goodsReceipt: GoodsReceipt) => void;
   updateGoodsReceipt: (updatedGoodsReceipt: GoodsReceipt) => void;
+  addInvoice: (invoice: Invoice) => void;
+  updateInvoice: (updatedInvoice: Invoice) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -46,6 +50,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders);
   const [vendors] = useState<Vendor[]>(initialVendors);
   const [goodsReceipts, setGoodsReceipts] = useState<GoodsReceipt[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(projects[0] || null);
 
   const addProject = (project: Project) => {
@@ -108,6 +113,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const addInvoice = (invoice: Invoice) => {
+    setInvoices([...invoices, invoice]);
+  };
+
+  const updateInvoice = (updatedInvoice: Invoice) => {
+    setInvoices(
+      invoices.map((inv) =>
+        inv.id === updatedInvoice.id ? updatedInvoice : inv
+      )
+    );
+  };
+
   const value = useMemo(
     () => ({
       projects,
@@ -116,6 +133,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       purchaseOrders,
       vendors,
       goodsReceipts,
+      invoices,
       selectedProject,
       setSelectedProject,
       addProject,
@@ -128,6 +146,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updatePurchaseOrder,
       addGoodsReceipt,
       updateGoodsReceipt,
+      addInvoice,
+      updateInvoice,
     }),
     [
       projects,
@@ -136,6 +156,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       purchaseOrders,
       vendors,
       goodsReceipts,
+      invoices,
       selectedProject,
     ]
   );

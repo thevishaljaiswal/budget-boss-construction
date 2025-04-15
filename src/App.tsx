@@ -15,6 +15,7 @@ import PurchaseOrdersPage from "@/pages/PurchaseOrdersPage";
 import WorkOrdersPage from "@/pages/WorkOrdersPage";
 import GoodsReceiptPage from "@/pages/GoodsReceiptPage";
 import VendorsPage from "@/pages/VendorsPage";
+import InvoicesPage from "@/pages/InvoicesPage";
 import ReportsPage from "@/pages/ReportsPage";
 import NotFound from "@/pages/NotFound";
 
@@ -89,6 +90,14 @@ const App = () => (
               element={
                 <MainLayout>
                   <GoodsReceiptPage />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/invoices"
+              element={
+                <MainLayout>
+                  <InvoicesPage />
                 </MainLayout>
               }
             />
