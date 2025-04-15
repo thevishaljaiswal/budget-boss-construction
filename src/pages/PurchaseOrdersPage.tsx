@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import PageHeader from "@/components/shared/PageHeader";
@@ -74,6 +73,7 @@ const PurchaseOrdersPage: React.FC = () => {
       status: "Draft" as const,
       totalAmount: Number(newPO.totalAmount),
       taxPercentage: Number(newPO.taxPercentage),
+      type: newPO.type as "PO" | "WO",
     };
     
     addPurchaseOrder(purchaseOrder);
