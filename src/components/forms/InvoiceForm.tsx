@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,7 +73,16 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ onComplete, editingInvoice })
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const invoiceData: Invoice = {
       id: editingInvoice?.id || uuidv4(),
-      ...values,
+      invoiceNumber: values.invoiceNumber,
+      vendorId: values.vendorId,
+      poId: values.poId,
+      invoiceDate: values.invoiceDate,
+      amountClaimed: values.amountClaimed,
+      amountApproved: values.amountApproved,
+      retention: values.retention,
+      taxDeducted: values.taxDeducted,
+      paymentDueDate: values.paymentDueDate,
+      status: values.status,
     };
 
     if (editingInvoice) {
