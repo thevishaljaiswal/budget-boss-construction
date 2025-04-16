@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useMemo } from 'react';
 import { 
   Project, 
@@ -55,6 +54,8 @@ interface AppContextType {
   updateAdvanceAdjustment: (updatedAdvanceAdjustment: AdvanceAdjustment) => void;
   addInvoicePayment: (invoicePayment: InvoicePayment) => void;
   updateInvoicePayment: (updatedInvoicePayment: InvoicePayment) => void;
+  addVendor: (vendor: Vendor) => void;
+  updateVendor: (updatedVendor: Vendor) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -64,7 +65,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [budgetItems, setBudgetItems] = useState<BudgetItem[]>(initialBudgetItems);
   const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>(initialPurchaseRequests);
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders);
-  const [vendors] = useState<Vendor[]>(initialVendors);
+  const [vendors, setVendors] = useState<Vendor[]>(initialVendors);
   const [goodsReceipts, setGoodsReceipts] = useState<GoodsReceipt[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [advanceRequests, setAdvanceRequests] = useState<AdvanceRequest[]>([]);
@@ -144,8 +145,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       )
     );
   };
-  
-  // Add functions for advance requests
+
   const addAdvanceRequest = (advanceRequest: AdvanceRequest) => {
     setAdvanceRequests([...advanceRequests, advanceRequest]);
   };
@@ -158,11 +158,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  // Add functions for advance payments
   const addAdvancePayment = (advancePayment: AdvancePayment) => {
     setAdvancePayments([...advancePayments, advancePayment]);
     
-    // Update the status of the related advance request to 'Paid'
     const relatedRequest = advanceRequests.find(req => req.id === advancePayment.advanceRequestId);
     if (relatedRequest) {
       updateAdvanceRequest({
@@ -180,11 +178,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  // Add functions for advance adjustments
   const addAdvanceAdjustment = (advanceAdjustment: AdvanceAdjustment) => {
     setAdvanceAdjustments([...advanceAdjustments, advanceAdjustment]);
     
-    // Update the remaining amount in the related advance payment
     const relatedPayment = advancePayments.find(payment => payment.id === advanceAdjustment.advancePaymentId);
     if (relatedPayment) {
       updateAdvancePayment({
@@ -202,11 +198,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  // Add functions for invoice payments
   const addInvoicePayment = (invoicePayment: InvoicePayment) => {
     setInvoicePayments([...invoicePayments, invoicePayment]);
     
-    // Update the status of the related invoice to 'Paid'
     const relatedInvoice = invoices.find(inv => inv.id === invoicePayment.invoiceId);
     if (relatedInvoice) {
       updateInvoice({
@@ -220,6 +214,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setInvoicePayments(
       invoicePayments.map((ip) =>
         ip.id === updatedInvoicePayment.id ? updatedInvoicePayment : ip
+      )
+    );
+  };
+
+  const addVendor = (vendor: Vendor) => {
+    setVendors([...vendors, vendor]);
+  };
+
+  const updateVendor = (updatedVendor: Vendor) => {
+    setVendors(
+      vendors.map((vendor) =>
+        vendor.id === updatedVendor.id ? updatedVendor : vendor
       )
     );
   };
@@ -259,6 +265,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateAdvanceAdjustment,
       addInvoicePayment,
       updateInvoicePayment,
+      addVendor,
+      updateVendor,
     }),
     [
       projects,

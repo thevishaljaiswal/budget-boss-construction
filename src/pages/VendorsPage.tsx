@@ -4,22 +4,24 @@ import { useAppContext } from "@/context/AppContext";
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Mail, Phone, Building } from "lucide-react";
+import { PlusCircle, Mail, Phone, Building, MapPin, CreditCard } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import VendorForm from "@/components/forms/VendorForm";
+import { Vendor } from "@/types";
 
 const VendorsPage: React.FC = () => {
-  const { vendors } = useAppContext();
+  const { vendors, addVendor } = useAppContext();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   
   // Filter vendors by search term
   const filteredVendors = vendors.filter(
@@ -27,6 +29,11 @@ const VendorsPage: React.FC = () => {
       vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vendor.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleVendorCreate = (vendor: Vendor) => {
+    addVendor(vendor);
+    setIsOpen(false);
+  };
   
   return (
     <div className="space-y-8">
@@ -34,86 +41,24 @@ const VendorsPage: React.FC = () => {
         title="Vendors"
         description="Manage vendors and suppliers for your construction projects."
         action={
-          <Dialog>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Vendor
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add New Vendor</DialogTitle>
                 <DialogDescription>
                   Add a new vendor or supplier to your vendor database.
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Company Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="BuildRight Materials Inc."
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="contactPerson" className="text-right">
-                    Contact Person
-                  </Label>
-                  <Input
-                    id="contactPerson"
-                    placeholder="James Brown"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="james@buildright.com"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="phone" className="text-right">
-                    Phone
-                  </Label>
-                  <Input
-                    id="phone"
-                    placeholder="555-123-4567"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="address" className="text-right">
-                    Address
-                  </Label>
-                  <Input
-                    id="address"
-                    placeholder="123 Commerce Blvd, Seattle, WA 98101"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="taxId" className="text-right">
-                    Tax ID
-                  </Label>
-                  <Input
-                    id="taxId"
-                    placeholder="12-3456789"
-                    className="col-span-3"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Save Vendor</Button>
-              </DialogFooter>
+              <VendorForm 
+                onSuccess={() => setIsOpen(false)}
+                onVendorCreate={handleVendorCreate}
+              />
             </DialogContent>
           </Dialog>
         }
@@ -142,8 +87,17 @@ const VendorsPage: React.FC = () => {
                     Add First Vendor
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
-                  {/* Same dialog content as above */}
+                <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Add New Vendor</DialogTitle>
+                    <DialogDescription>
+                      Add a new vendor or supplier to your vendor database.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <VendorForm 
+                    onSuccess={() => {}}
+                    onVendorCreate={handleVendorCreate}
+                  />
                 </DialogContent>
               </Dialog>
             )}
@@ -169,9 +123,23 @@ const VendorsPage: React.FC = () => {
                       <span className="text-sm">{vendor.phone}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Building className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{vendor.address}</span>
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">
+                        {[vendor.city, vendor.state, vendor.country].filter(Boolean).join(", ")}
+                      </span>
                     </div>
+                    {vendor.gstin && (
+                      <div className="flex items-center gap-2">
+                        <Building className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">GSTIN: {vendor.gstin}</span>
+                      </div>
+                    )}
+                    {vendor.bankName && (
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{vendor.bankName}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex justify-end space-x-2 pt-2">
                     <Button variant="outline" size="sm">Edit</Button>

@@ -1,4 +1,3 @@
-
 // Project Types
 export interface Project {
   id: string;
@@ -97,12 +96,31 @@ export interface POLineItem {
 
 export interface Vendor {
   id: string;
-  name: string;
+  salutation?: string;
+  firstName: string;
+  lastName: string;
+  name: string; // Full name (firstName + lastName)
   contactPerson: string;
   email: string;
   phone: string;
+  mobile?: string;
   address: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  addressLine3?: string;
+  city?: string;
+  postalCode?: string;
+  state?: string;
+  country?: string;
+  location?: string;
   taxId?: string;
+  gstin?: string;
+  pan?: string;
+  bankName?: string;
+  accountHolderName?: string;
+  bankAccountNo?: string;
+  bankBranch?: string;
+  ifsc?: string;
 }
 
 export interface GoodsReceipt {
