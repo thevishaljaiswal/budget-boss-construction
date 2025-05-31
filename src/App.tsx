@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +21,7 @@ import AdvanceAdjustmentsPage from "@/pages/AdvanceAdjustmentsPage";
 import InvoicePaymentsPage from "@/pages/InvoicePaymentsPage";
 import ReportsPage from "@/pages/ReportsPage";
 import NotFound from "@/pages/NotFound";
+import RequestForQuotationsPage from "@/pages/RequestForQuotationsPage";
 
 const queryClient = new QueryClient();
 
@@ -150,6 +150,14 @@ const App = () => (
               element={
                 <MainLayout>
                   <ReportsPage />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/rfq"
+              element={
+                <MainLayout>
+                  <RequestForQuotationsPage />
                 </MainLayout>
               }
             />

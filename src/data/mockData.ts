@@ -1,4 +1,3 @@
-
 import { 
   Project, 
   BudgetCategory, 
@@ -6,7 +5,11 @@ import {
   BudgetItem, 
   PurchaseRequest, 
   PurchaseOrder,
-  Vendor
+  Vendor,
+  RequestForQuotation,
+  RFQLineItem,
+  VendorQuotation,
+  QuotationLineItem
 } from '@/types';
 
 // Mock Projects
@@ -307,5 +310,165 @@ export const purchaseOrders: PurchaseOrder[] = [
     specialTerms: 'Must follow site safety protocols',
     status: 'Draft',
     totalAmount: 48000
+  }
+];
+
+// Request for Quotations
+export const requestForQuotations: RequestForQuotation[] = [
+  {
+    id: '1',
+    projectId: '1',
+    rfqNumber: 'RFQ-HVR-2023-001',
+    purchaseRequestIds: ['1', '3'],
+    title: 'Foundation Materials and Structural Steel',
+    description: 'Request for quotation for concrete materials and rebar installation for Harbor View Residences foundation work',
+    issueDate: '2023-07-26',
+    responseDeadline: '2023-08-05',
+    deliveryLocation: 'Harbor View Site, San Francisco, CA',
+    paymentTerms: 'Net 30 days',
+    validityPeriod: 30,
+    technicalSpecifications: 'C30 concrete specification, Grade 60 rebar as per structural drawings',
+    specialTerms: 'Delivery only during weekday mornings (7 AM - 11 AM)',
+    status: 'Responses Received',
+    createdBy: 'Sarah Johnson',
+    vendorIds: ['1', '3']
+  },
+  {
+    id: '2',
+    projectId: '1',
+    rfqNumber: 'RFQ-HVR-2023-002',
+    purchaseRequestIds: ['2'],
+    title: 'Electrical Installation Services',
+    description: 'Request for quotation for main electrical distribution system installation',
+    issueDate: '2023-07-28',
+    responseDeadline: '2023-08-10',
+    deliveryLocation: 'Harbor View Site, San Francisco, CA',
+    paymentTerms: 'Net 45 days',
+    validityPeriod: 45,
+    technicalSpecifications: 'Installation of main distribution panels and transformers as per electrical drawings',
+    specialTerms: 'Must follow site safety protocols and provide certified electricians',
+    status: 'Sent',
+    createdBy: 'Maria Garcia',
+    vendorIds: ['2']
+  }
+];
+
+// RFQ Line Items
+export const rfqLineItems: RFQLineItem[] = [
+  {
+    id: '1',
+    rfqId: '1',
+    purchaseRequestId: '1',
+    itemDescription: 'Foundation concrete work - C30 specification',
+    quantity: 50,
+    uom: 'cubic meter',
+    technicalSpecs: 'C30 concrete with specified aggregate mix',
+    deliveryDate: '2023-08-15'
+  },
+  {
+    id: '2',
+    rfqId: '1',
+    purchaseRequestId: '3',
+    itemDescription: 'Rebar installation for structural columns',
+    quantity: 15,
+    uom: 'ton',
+    technicalSpecs: 'Grade 60 rebar, various sizes as per structural drawings',
+    deliveryDate: '2023-08-20'
+  },
+  {
+    id: '3',
+    rfqId: '2',
+    purchaseRequestId: '2',
+    itemDescription: 'Main electrical distribution system installation',
+    quantity: 1,
+    uom: 'lump sum',
+    technicalSpecs: 'Complete installation including panels, transformers, and connections',
+    deliveryDate: '2023-08-25'
+  }
+];
+
+// Vendor Quotations
+export const vendorQuotations: VendorQuotation[] = [
+  {
+    id: '1',
+    rfqId: '1',
+    vendorId: '3',
+    quotationNumber: 'QT-PCS-2023-001',
+    submissionDate: '2023-08-02',
+    validUntil: '2023-08-31',
+    totalAmount: 68500,
+    currency: 'USD',
+    deliveryPeriod: '10 working days',
+    paymentTerms: 'Net 30 days',
+    warranty: '1 year structural warranty',
+    notes: 'All materials meet specified standards. Free delivery included.',
+    status: 'Submitted'
+  },
+  {
+    id: '2',
+    rfqId: '1',
+    vendorId: '1',
+    quotationNumber: 'QT-BR-2023-001',
+    submissionDate: '2023-08-01',
+    validUntil: '2023-08-30',
+    totalAmount: 72000,
+    currency: 'USD',
+    deliveryPeriod: '12 working days',
+    paymentTerms: 'Net 30 days',
+    warranty: '2 year material warranty',
+    notes: 'Premium quality materials with extended warranty coverage.',
+    status: 'Under Review'
+  }
+];
+
+// Quotation Line Items
+export const quotationLineItems: QuotationLineItem[] = [
+  {
+    id: '1',
+    quotationId: '1',
+    rfqLineItemId: '1',
+    description: 'C30 Concrete Supply and Pouring',
+    quantity: 50,
+    unitPrice: 315,
+    totalPrice: 15750,
+    deliveryDate: '2023-08-15',
+    brand: 'Pacific Concrete',
+    specifications: 'High-grade C30 mix with specified additives'
+  },
+  {
+    id: '2',
+    quotationId: '1',
+    rfqLineItemId: '2',
+    description: 'Grade 60 Rebar Supply and Installation',
+    quantity: 15,
+    unitPrice: 1250,
+    totalPrice: 18750,
+    deliveryDate: '2023-08-20',
+    brand: 'SteelMax',
+    specifications: 'Certified Grade 60 rebar with installation service'
+  },
+  {
+    id: '3',
+    quotationId: '2',
+    rfqLineItemId: '1',
+    description: 'Premium C30 Concrete with Fast Set',
+    quantity: 50,
+    unitPrice: 340,
+    totalPrice: 17000,
+    deliveryDate: '2023-08-14',
+    brand: 'BuildRight Premium',
+    specifications: 'Premium C30 mix with fast-setting additives'
+  },
+  {
+    id: '4',
+    quotationId: '2',
+    rfqLineItemId: '2',
+    description: 'Premium Grade 60 Rebar with Extended Warranty',
+    quantity: 15,
+    unitPrice: 1300,
+    totalPrice: 19500,
+    deliveryDate: '2023-08-18',
+    brand: 'BuildRight Steel',
+    specifications: 'Premium Grade 60 rebar with 2-year warranty'
   }
 ];

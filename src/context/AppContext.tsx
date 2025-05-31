@@ -10,14 +10,22 @@ import {
   AdvanceRequest,
   AdvancePayment,
   AdvanceAdjustment,
-  InvoicePayment
+  InvoicePayment,
+  RequestForQuotation,
+  RFQLineItem,
+  VendorQuotation,
+  QuotationLineItem
 } from '@/types';
 import { 
   projects as initialProjects,
   budgetItems as initialBudgetItems,
   purchaseRequests as initialPurchaseRequests,
   purchaseOrders as initialPurchaseOrders,
-  vendors as initialVendors
+  vendors as initialVendors,
+  requestForQuotations as initialRFQs,
+  rfqLineItems as initialRFQLineItems,
+  vendorQuotations as initialVendorQuotations,
+  quotationLineItems as initialQuotationLineItems
 } from '@/data/mockData';
 
 interface AppContextType {
@@ -32,6 +40,10 @@ interface AppContextType {
   advancePayments: AdvancePayment[];
   advanceAdjustments: AdvanceAdjustment[];
   invoicePayments: InvoicePayment[];
+  requestForQuotations: RequestForQuotation[];
+  rfqLineItems: RFQLineItem[];
+  vendorQuotations: VendorQuotation[];
+  quotationLineItems: QuotationLineItem[];
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
   addProject: (project: Project) => void;
@@ -56,6 +68,12 @@ interface AppContextType {
   updateInvoicePayment: (updatedInvoicePayment: InvoicePayment) => void;
   addVendor: (vendor: Vendor) => void;
   updateVendor: (updatedVendor: Vendor) => void;
+  addRequestForQuotation: (rfq: RequestForQuotation) => void;
+  updateRequestForQuotation: (updatedRfq: RequestForQuotation) => void;
+  addRFQLineItem: (lineItem: RFQLineItem) => void;
+  addVendorQuotation: (quotation: VendorQuotation) => void;
+  updateVendorQuotation: (updatedQuotation: VendorQuotation) => void;
+  addQuotationLineItem: (lineItem: QuotationLineItem) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -72,6 +90,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [advancePayments, setAdvancePayments] = useState<AdvancePayment[]>([]);
   const [advanceAdjustments, setAdvanceAdjustments] = useState<AdvanceAdjustment[]>([]);
   const [invoicePayments, setInvoicePayments] = useState<InvoicePayment[]>([]);
+  const [requestForQuotations, setRequestForQuotations] = useState<RequestForQuotation[]>(initialRFQs);
+  const [rfqLineItems, setRFQLineItems] = useState<RFQLineItem[]>(initialRFQLineItems);
+  const [vendorQuotations, setVendorQuotations] = useState<VendorQuotation[]>(initialVendorQuotations);
+  const [quotationLineItems, setQuotationLineItems] = useState<QuotationLineItem[]>(initialQuotationLineItems);
   const [selectedProject, setSelectedProject] = useState<Project | null>(projects[0] || null);
 
   const addProject = (project: Project) => {
@@ -230,6 +252,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const addRequestForQuotation = (rfq: RequestForQuotation) => {
+    setRequestForQuotations([...requestForQuotations, rfq]);
+  };
+
+  const updateRequestForQuotation = (updatedRfq: RequestForQuotation) => {
+    setRequestForQuotations(
+      requestForQuotations.map((rfq) =>
+        rfq.id === updatedRfq.id ? updatedRfq : rfq
+      )
+    );
+  };
+
+  const addRFQLineItem = (lineItem: RFQLineItem) => {
+    setRFQLineItems([...rfqLineItems, lineItem]);
+  };
+
+  const addVendorQuotation = (quotation: VendorQuotation) => {
+    setVendorQuotations([...vendorQuotations, quotation]);
+  };
+
+  const updateVendorQuotation = (updatedQuotation: VendorQuotation) => {
+    setVendorQuotations(
+      vendorQuotations.map((q) =>
+        q.id === updatedQuotation.id ? updatedQuotation : q
+      )
+    );
+  };
+
+  const addQuotationLineItem = (lineItem: QuotationLineItem) => {
+    setQuotationLineItems([...quotationLineItems, lineItem]);
+  };
+
   const value = useMemo(
     () => ({
       projects,
@@ -243,6 +297,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       advancePayments,
       advanceAdjustments,
       invoicePayments,
+      requestForQuotations,
+      rfqLineItems,
+      vendorQuotations,
+      quotationLineItems,
       selectedProject,
       setSelectedProject,
       addProject,
@@ -267,6 +325,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateInvoicePayment,
       addVendor,
       updateVendor,
+      addRequestForQuotation,
+      updateRequestForQuotation,
+      addRFQLineItem,
+      addVendorQuotation,
+      updateVendorQuotation,
+      addQuotationLineItem,
     }),
     [
       projects,
@@ -280,6 +344,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       advancePayments,
       advanceAdjustments,
       invoicePayments,
+      requestForQuotations,
+      rfqLineItems,
+      vendorQuotations,
+      quotationLineItems,
       selectedProject,
     ]
   );

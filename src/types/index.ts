@@ -222,3 +222,64 @@ export interface InvoicePayment {
   paymentRemarks?: string;
   status: 'Completed' | 'Pending' | 'Failed';
 }
+
+// Request for Quotation Types
+export interface RequestForQuotation {
+  id: string;
+  projectId: string;
+  rfqNumber: string;
+  purchaseRequestIds: string[]; // Multiple PRs can be combined into one RFQ
+  title: string;
+  description?: string;
+  issueDate: string;
+  responseDeadline: string;
+  deliveryLocation: string;
+  paymentTerms: string;
+  validityPeriod: number; // in days
+  technicalSpecifications?: string;
+  specialTerms?: string;
+  status: 'Draft' | 'Sent' | 'Responses Received' | 'Evaluated' | 'Awarded' | 'Cancelled';
+  createdBy: string;
+  vendorIds: string[]; // Vendors invited to quote
+}
+
+export interface RFQLineItem {
+  id: string;
+  rfqId: string;
+  purchaseRequestId: string;
+  itemDescription: string;
+  quantity: number;
+  uom: string; // Unit of Measure
+  technicalSpecs?: string;
+  deliveryDate: string;
+}
+
+export interface VendorQuotation {
+  id: string;
+  rfqId: string;
+  vendorId: string;
+  quotationNumber: string;
+  submissionDate: string;
+  validUntil: string;
+  totalAmount: number;
+  currency: string;
+  deliveryPeriod: string;
+  paymentTerms: string;
+  warranty?: string;
+  notes?: string;
+  status: 'Submitted' | 'Under Review' | 'Accepted' | 'Rejected';
+}
+
+export interface QuotationLineItem {
+  id: string;
+  quotationId: string;
+  rfqLineItemId: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  deliveryDate: string;
+  brand?: string;
+  model?: string;
+  specifications?: string;
+}
