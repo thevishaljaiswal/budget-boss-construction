@@ -16,7 +16,8 @@ import {
   CreditCard,
   ArrowUpDown,
   FileUp,
-  Landmark
+  Landmark,
+  FileSearch
 } from "lucide-react";
 
 interface NavItemProps {
@@ -69,6 +70,7 @@ const Sidebar = () => {
             </h2>
             <div className="mt-3 space-y-1">
               <NavItem href="/purchase-requests" icon={ClipboardList} label="Purchase Requests" />
+              <NavItem href="/rfq" icon={FileSearch} label="Request for Quotations" />
               <NavItem href="/purchase-orders" icon={ShoppingCart} label="Purchase Orders" />
               <NavItem href="/work-orders" icon={FileText} label="Work Orders" />
               <NavItem href="/goods-receipts" icon={Package} label="Goods Receipts" />
