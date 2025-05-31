@@ -186,6 +186,8 @@ export const budgetItems: BudgetItem[] = [
 export const vendors: Vendor[] = [
   {
     id: '1',
+    firstName: 'James',
+    lastName: 'Brown',
     name: 'BuildRight Materials Inc.',
     contactPerson: 'James Brown',
     email: 'james@buildright.com',
@@ -195,6 +197,8 @@ export const vendors: Vendor[] = [
   },
   {
     id: '2',
+    firstName: 'Susan',
+    lastName: 'Parker',
     name: 'Premium Electric Supplies',
     contactPerson: 'Susan Parker',
     email: 'susan@premiumelectric.com',
@@ -204,6 +208,8 @@ export const vendors: Vendor[] = [
   },
   {
     id: '3',
+    firstName: 'Miguel',
+    lastName: 'Rodriguez',
     name: 'Pacific Concrete Solutions',
     contactPerson: 'Miguel Rodriguez',
     email: 'miguel@pacificconcrete.com',
@@ -213,6 +219,8 @@ export const vendors: Vendor[] = [
   },
   {
     id: '4',
+    firstName: 'Thomas',
+    lastName: 'Smith',
     name: 'Smith & Sons Plumbing',
     contactPerson: 'Thomas Smith',
     email: 'thomas@smithplumbing.com',
