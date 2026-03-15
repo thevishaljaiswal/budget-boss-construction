@@ -22,6 +22,7 @@ import InvoicePaymentsPage from "@/pages/InvoicePaymentsPage";
 import ReportsPage from "@/pages/ReportsPage";
 import NotFound from "@/pages/NotFound";
 import RequestForQuotationsPage from "@/pages/RequestForQuotationsPage";
+import BillSettlementPage from "@/pages/BillSettlementPage";
 
 const queryClient = new QueryClient();
 
