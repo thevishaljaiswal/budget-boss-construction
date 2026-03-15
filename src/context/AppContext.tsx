@@ -14,7 +14,8 @@ import {
   RequestForQuotation,
   RFQLineItem,
   VendorQuotation,
-  QuotationLineItem
+  QuotationLineItem,
+  BillSettlement
 } from '@/types';
 import { 
   projects as initialProjects,
@@ -25,7 +26,8 @@ import {
   requestForQuotations as initialRFQs,
   rfqLineItems as initialRFQLineItems,
   vendorQuotations as initialVendorQuotations,
-  quotationLineItems as initialQuotationLineItems
+  quotationLineItems as initialQuotationLineItems,
+  billSettlements as initialBillSettlements
 } from '@/data/mockData';
 
 interface AppContextType {
