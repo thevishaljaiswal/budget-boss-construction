@@ -17,7 +17,8 @@ import {
   ArrowUpDown,
   FileUp,
   Landmark,
-  FileSearch
+  FileSearch,
+  FileSpreadsheet
 } from "lucide-react";
 
 interface NavItemProps {
