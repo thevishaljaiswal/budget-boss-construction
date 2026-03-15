@@ -369,6 +369,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       rfqLineItems,
       vendorQuotations,
       quotationLineItems,
+      billSettlements,
       selectedProject,
     ]
   );
