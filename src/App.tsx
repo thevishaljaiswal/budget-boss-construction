@@ -162,6 +162,13 @@ const App = () => (
                 </MainLayout>
               }
             />
+            <Route
+              path="/bill-settlement"
+              element={
+                <MainLayout>
+                  <BillSettlementPage />
+                </MainLayout>
+              }
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

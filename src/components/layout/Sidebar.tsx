@@ -94,6 +94,7 @@ const Sidebar = () => {
             </h2>
             <div className="mt-3 space-y-1">
               <NavItem href="/invoice-payments" icon={Landmark} label="Invoice Payments" />
+              <NavItem href="/bill-settlement" icon={FileSpreadsheet} label="Bill Settlement" />
             </div>
           </div>
           <div className="mb-4">
