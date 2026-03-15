@@ -9,7 +9,8 @@ import {
   RequestForQuotation,
   RFQLineItem,
   VendorQuotation,
-  QuotationLineItem
+  QuotationLineItem,
+  BillSettlement
 } from '@/types';
 
 // Mock Projects
