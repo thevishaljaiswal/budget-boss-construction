@@ -46,6 +46,7 @@ interface AppContextType {
   rfqLineItems: RFQLineItem[];
   vendorQuotations: VendorQuotation[];
   quotationLineItems: QuotationLineItem[];
+  billSettlements: BillSettlement[];
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
   addProject: (project: Project) => void;
