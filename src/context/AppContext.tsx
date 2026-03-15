@@ -77,6 +77,8 @@ interface AppContextType {
   addVendorQuotation: (quotation: VendorQuotation) => void;
   updateVendorQuotation: (updatedQuotation: VendorQuotation) => void;
   addQuotationLineItem: (lineItem: QuotationLineItem) => void;
+  addBillSettlement: (settlement: BillSettlement) => void;
+  updateBillSettlement: (settlement: BillSettlement) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
