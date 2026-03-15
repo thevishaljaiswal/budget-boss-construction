@@ -283,3 +283,32 @@ export interface QuotationLineItem {
   model?: string;
   specifications?: string;
 }
+
+// Bill Settlement Types
+export interface BillSettlement {
+  id: string;
+  billNumber: string;
+  projectId: string;
+  vendorId: string;
+  billDate: string;
+  submittedBy: string;
+  remarks?: string;
+  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'Settled';
+  totalAmount: number;
+  totalTax: number;
+  grandTotal: number;
+  lineItems: BillSettlementLine[];
+}
+
+export interface BillSettlementLine {
+  id: string;
+  billNo: string;
+  date: string;
+  vendorName: string;
+  description: string;
+  quantity: number;
+  rate: number;
+  taxPercent: number;
+  taxAmount: number;
+  total: number;
+}

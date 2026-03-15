@@ -22,6 +22,7 @@ import InvoicePaymentsPage from "@/pages/InvoicePaymentsPage";
 import ReportsPage from "@/pages/ReportsPage";
 import NotFound from "@/pages/NotFound";
 import RequestForQuotationsPage from "@/pages/RequestForQuotationsPage";
+import BillSettlementPage from "@/pages/BillSettlementPage";
 
 const queryClient = new QueryClient();
 
@@ -158,6 +159,14 @@ const App = () => (
               element={
                 <MainLayout>
                   <RequestForQuotationsPage />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/bill-settlement"
+              element={
+                <MainLayout>
+                  <BillSettlementPage />
                 </MainLayout>
               }
             />

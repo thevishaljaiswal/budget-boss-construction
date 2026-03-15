@@ -9,7 +9,8 @@ import {
   RequestForQuotation,
   RFQLineItem,
   VendorQuotation,
-  QuotationLineItem
+  QuotationLineItem,
+  BillSettlement
 } from '@/types';
 
 // Mock Projects
@@ -470,5 +471,44 @@ export const quotationLineItems: QuotationLineItem[] = [
     deliveryDate: '2023-08-18',
     brand: 'BuildRight Steel',
     specifications: 'Premium Grade 60 rebar with 2-year warranty'
+  }
+];
+
+// Mock Bill Settlements
+export const billSettlements: BillSettlement[] = [
+  {
+    id: 'BS-001',
+    billNumber: 'BILL-2023-001',
+    projectId: '1',
+    vendorId: 'V001',
+    billDate: '2023-09-15',
+    submittedBy: 'Sarah Johnson',
+    remarks: 'Monthly material supply settlement',
+    status: 'Submitted',
+    totalAmount: 245000,
+    totalTax: 44100,
+    grandTotal: 289100,
+    lineItems: [
+      { id: 'BSL-001', billNo: 'INV-4521', date: '2023-09-01', vendorName: 'Metro Steel Suppliers', description: 'TMT Steel Bars 12mm', quantity: 500, rate: 250, taxPercent: 18, taxAmount: 22500, total: 147500 },
+      { id: 'BSL-002', billNo: 'INV-4522', date: '2023-09-05', vendorName: 'Metro Steel Suppliers', description: 'MS Plates 6mm', quantity: 200, rate: 350, taxPercent: 18, taxAmount: 12600, total: 82600 },
+      { id: 'BSL-003', billNo: 'INV-4523', date: '2023-09-10', vendorName: 'Metro Steel Suppliers', description: 'Binding Wire', quantity: 100, rate: 150, taxPercent: 18, taxAmount: 2700, total: 17700 },
+    ]
+  },
+  {
+    id: 'BS-002',
+    billNumber: 'BILL-2023-002',
+    projectId: '2',
+    vendorId: 'V002',
+    billDate: '2023-10-01',
+    submittedBy: 'Mike Chen',
+    status: 'Draft',
+    totalAmount: 180000,
+    totalTax: 32400,
+    grandTotal: 212400,
+    lineItems: [
+      { id: 'BSL-004', billNo: 'INV-6701', date: '2023-09-20', vendorName: 'Premium Electricals', description: 'Copper Cables 4 sqmm', quantity: 1000, rate: 85, taxPercent: 18, taxAmount: 15300, total: 100300 },
+      { id: 'BSL-005', billNo: 'INV-6702', date: '2023-09-25', vendorName: 'Premium Electricals', description: 'MCB 32A', quantity: 50, rate: 450, taxPercent: 18, taxAmount: 4050, total: 26550 },
+      { id: 'BSL-006', billNo: 'INV-6703', date: '2023-09-28', vendorName: 'Premium Electricals', description: 'Distribution Boards', quantity: 10, rate: 5500, taxPercent: 18, taxAmount: 9900, total: 64900 },
+    ]
   }
 ];

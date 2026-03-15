@@ -14,7 +14,8 @@ import {
   RequestForQuotation,
   RFQLineItem,
   VendorQuotation,
-  QuotationLineItem
+  QuotationLineItem,
+  BillSettlement
 } from '@/types';
 import { 
   projects as initialProjects,
@@ -25,7 +26,8 @@ import {
   requestForQuotations as initialRFQs,
   rfqLineItems as initialRFQLineItems,
   vendorQuotations as initialVendorQuotations,
-  quotationLineItems as initialQuotationLineItems
+  quotationLineItems as initialQuotationLineItems,
+  billSettlements as initialBillSettlements
 } from '@/data/mockData';
 
 interface AppContextType {
@@ -44,6 +46,7 @@ interface AppContextType {
   rfqLineItems: RFQLineItem[];
   vendorQuotations: VendorQuotation[];
   quotationLineItems: QuotationLineItem[];
+  billSettlements: BillSettlement[];
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
   addProject: (project: Project) => void;
@@ -74,6 +77,8 @@ interface AppContextType {
   addVendorQuotation: (quotation: VendorQuotation) => void;
   updateVendorQuotation: (updatedQuotation: VendorQuotation) => void;
   addQuotationLineItem: (lineItem: QuotationLineItem) => void;
+  addBillSettlement: (settlement: BillSettlement) => void;
+  updateBillSettlement: (settlement: BillSettlement) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -94,6 +99,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [rfqLineItems, setRFQLineItems] = useState<RFQLineItem[]>(initialRFQLineItems);
   const [vendorQuotations, setVendorQuotations] = useState<VendorQuotation[]>(initialVendorQuotations);
   const [quotationLineItems, setQuotationLineItems] = useState<QuotationLineItem[]>(initialQuotationLineItems);
+  const [billSettlements, setBillSettlements] = useState<BillSettlement[]>(initialBillSettlements);
   const [selectedProject, setSelectedProject] = useState<Project | null>(projects[0] || null);
 
   const addProject = (project: Project) => {
@@ -284,6 +290,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setQuotationLineItems([...quotationLineItems, lineItem]);
   };
 
+  const addBillSettlement = (settlement: BillSettlement) => {
+    setBillSettlements([...billSettlements, settlement]);
+  };
+
+  const updateBillSettlement = (updatedSettlement: BillSettlement) => {
+    setBillSettlements(
+      billSettlements.map((bs) =>
+        bs.id === updatedSettlement.id ? updatedSettlement : bs
+      )
+    );
+  };
+
   const value = useMemo(
     () => ({
       projects,
@@ -331,6 +349,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addVendorQuotation,
       updateVendorQuotation,
       addQuotationLineItem,
+      billSettlements,
+      addBillSettlement,
+      updateBillSettlement,
     }),
     [
       projects,
@@ -348,6 +369,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       rfqLineItems,
       vendorQuotations,
       quotationLineItems,
+      billSettlements,
       selectedProject,
     ]
   );
