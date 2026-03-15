@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { PageHeader } from '@/components/shared/PageHeader';
+import PageHeader from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

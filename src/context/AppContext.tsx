@@ -290,6 +290,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setQuotationLineItems([...quotationLineItems, lineItem]);
   };
 
+  const addBillSettlement = (settlement: BillSettlement) => {
+    setBillSettlements([...billSettlements, settlement]);
+  };
+
+  const updateBillSettlement = (updatedSettlement: BillSettlement) => {
+    setBillSettlements(
+      billSettlements.map((bs) =>
+        bs.id === updatedSettlement.id ? updatedSettlement : bs
+      )
+    );
+  };
+
   const value = useMemo(
     () => ({
       projects,
