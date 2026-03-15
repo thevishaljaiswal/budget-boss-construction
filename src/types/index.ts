@@ -312,15 +312,3 @@ export interface BillSettlementLine {
   taxAmount: number;
   total: number;
 }
-  id: string;
-  quotationId: string;
-  rfqLineItemId: string;
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  deliveryDate: string;
-  brand?: string;
-  model?: string;
-  specifications?: string;
-}
