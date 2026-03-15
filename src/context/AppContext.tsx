@@ -99,6 +99,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [rfqLineItems, setRFQLineItems] = useState<RFQLineItem[]>(initialRFQLineItems);
   const [vendorQuotations, setVendorQuotations] = useState<VendorQuotation[]>(initialVendorQuotations);
   const [quotationLineItems, setQuotationLineItems] = useState<QuotationLineItem[]>(initialQuotationLineItems);
+  const [billSettlements, setBillSettlements] = useState<BillSettlement[]>(initialBillSettlements);
   const [selectedProject, setSelectedProject] = useState<Project | null>(projects[0] || null);
 
   const addProject = (project: Project) => {
