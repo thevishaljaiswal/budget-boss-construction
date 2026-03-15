@@ -349,6 +349,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addVendorQuotation,
       updateVendorQuotation,
       addQuotationLineItem,
+      billSettlements,
+      addBillSettlement,
+      updateBillSettlement,
     }),
     [
       projects,
