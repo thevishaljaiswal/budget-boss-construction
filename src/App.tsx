@@ -23,6 +23,7 @@ import ReportsPage from "@/pages/ReportsPage";
 import NotFound from "@/pages/NotFound";
 import RequestForQuotationsPage from "@/pages/RequestForQuotationsPage";
 import BillSettlementPage from "@/pages/BillSettlementPage";
+import BankVerificationPage from '@/pages/BankVerificationPage';
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            <Route path="/bank-verification" element={<MainLayout><BankVerificationPage /></MainLayout>} />
             <Route
               path="/"
               element={

@@ -17,11 +17,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import VendorForm from "@/components/forms/VendorForm";
 import { Vendor } from "@/types";
+import BankWorkflow from '@/components/vendors/BankWorkflow';
+import { Link } from 'react-router-dom';
 
 const VendorsPage: React.FC = () => {
   const { vendors, addVendor } = useAppContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
   
   // Filter vendors by search term
   const filteredVendors = vendors.filter(
@@ -37,6 +40,12 @@ const VendorsPage: React.FC = () => {
   
   return (
     <div className="space-y-8">
+      <Dialog open={!!editingVendor} onOpenChange={open => { if (!open) setEditingVendor(null); }}>
+        <DialogContent className="sm:max-w-[760px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Edit Bank Details · {editingVendor?.name}</DialogTitle><DialogDescription>Bank change request · Accounts verification required</DialogDescription></DialogHeader>
+          {editingVendor && <BankWorkflow key={editingVendor.id} vendor={editingVendor} />}
+        </DialogContent>
+      </Dialog>
       <PageHeader
         title="Vendors"
         description="Manage vendors and suppliers for your construction projects."
@@ -71,6 +80,7 @@ const VendorsPage: React.FC = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
         />
+        <Button asChild variant="outline"><Link to="/bank-verification">Bank Verification</Link></Button>
       </div>
 
       {filteredVendors.length === 0 ? (
@@ -140,9 +150,10 @@ const VendorsPage: React.FC = () => {
                         <span className="text-sm">{vendor.bankName}</span>
                       </div>
                     )}
+                    {vendor.bankAccountNo && <p className="text-sm text-muted-foreground">Account ending {vendor.bankAccountNo.slice(-4)} · {vendor.ifsc}</p>}
                   </div>
                   <div className="flex justify-end space-x-2 pt-2">
-                    <Button variant="outline" size="sm">Edit</Button>
+                    <Button variant="outline" size="sm" onClick={() => setEditingVendor(vendor)}>Edit Bank Details</Button>
                     <Button size="sm">View Orders</Button>
                   </div>
                 </div>
