@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { bankSchema, validateCheque, canReviewBankChange } from './vendorBank';
+import { bankSchema, validateCheque, canReviewBankChange } from '../src/lib/vendorBank';
 
 describe('Vendor bank change rules', () => {
   test('cancelled cheque attachment is mandatory', () => {

@@ -17,7 +17,8 @@ export default function BankSignIn() {
     const parsed = z.object({ email: z.string().trim().email().max(255), password: z.string().min(8).max(128) }).safeParse({ email, password });
     if (!parsed.success) { setMessage(parsed.error.issues[0]?.message ?? 'Invalid sign-in details'); return; }
     setBusy(true);
-    const result = signup ? await supabase.auth.signUp({ ...parsed.data, options: { emailRedirectTo: window.location.href } }) : await supabase.auth.signInWithPassword(parsed.data);
+    const credentials = { email: parsed.data.email ?? '', password: parsed.data.password ?? '' };
+    const result = signup ? await supabase.auth.signUp({ ...credentials, options: { emailRedirectTo: window.location.href } }) : await supabase.auth.signInWithPassword(credentials);
     setBusy(false);
     if (result.error) setMessage(result.error.message);
     else if (signup && !result.data.session) setMessage('Check your email to confirm your account, then sign in.');
