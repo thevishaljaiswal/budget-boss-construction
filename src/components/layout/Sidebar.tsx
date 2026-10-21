@@ -103,6 +103,7 @@ const Sidebar = () => {
             </h2>
             <div className="mt-3 space-y-1">
               <NavItem href="/vendors" icon={Users} label="Vendors" />
+              <NavItem href="/bank-verification" icon={Landmark} label="Bank Verification" />
               <NavItem href="/reports" icon={FileText} label="Reports" />
             </div>
           </div>
