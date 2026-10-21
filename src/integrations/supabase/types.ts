@@ -14,16 +14,127 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vendor_bank_masters: {
+        Row: {
+          bank_details: Json
+          updated_at: string
+          vendor_id: string
+          verified_by: string
+        }
+        Insert: {
+          bank_details: Json
+          updated_at?: string
+          vendor_id: string
+          verified_by: string
+        }
+        Update: {
+          bank_details?: Json
+          updated_at?: string
+          vendor_id?: string
+          verified_by?: string
+        }
+        Relationships: []
+      }
+      vendor_bank_requests: {
+        Row: {
+          bank_details: Json
+          cheque_name: string
+          cheque_path: string
+          id: string
+          previous_details: Json
+          reason: string
+          requested_at: string
+          requested_by: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          vendor_id: string
+          vendor_name: string
+        }
+        Insert: {
+          bank_details: Json
+          cheque_name: string
+          cheque_path: string
+          id?: string
+          previous_details?: Json
+          reason: string
+          requested_at?: string
+          requested_by?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          vendor_id: string
+          vendor_name: string
+        }
+        Update: {
+          bank_details?: Json
+          cheque_name?: string
+          cheque_path?: string
+          id?: string
+          previous_details?: Json
+          reason?: string
+          requested_at?: string
+          requested_by?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          vendor_id?: string
+          vendor_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      review_bank_change: {
+        Args: { p_approve: boolean; p_notes?: string; p_request_id: string }
+        Returns: undefined
+      }
+      submit_bank_change: {
+        Args: {
+          p_cheque_name: string
+          p_cheque_path: string
+          p_details: Json
+          p_previous: Json
+          p_reason: string
+          p_vendor_id: string
+          p_vendor_name: string
+        }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "accounts"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +261,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["accounts"],
+    },
   },
 } as const
