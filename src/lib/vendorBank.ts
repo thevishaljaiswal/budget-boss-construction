@@ -9,6 +9,24 @@ export const bankSchema = z.object({
   ifsc: z.string().trim().toUpperCase().regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Enter a valid IFSC'),
 });
 export type BankDetails = z.infer<typeof bankSchema>;
+export interface BankChangeRequest {
+  id: string;
+  vendorId: string;
+  vendorName: string;
+  details: BankDetails;
+  previousDetails: BankDetails;
+  cheque: File;
+  reason: string;
+  requestedAt: string;
+  status: 'Pending' | 'Verified' | 'Rejected';
+  reviewedAt?: string;
+  reviewNotes?: string;
+}
+export function reviewBankRequest(request: BankChangeRequest, approve: boolean, notes: string): BankChangeRequest {
+  if (request.status !== 'Pending') throw new Error('Request is no longer pending');
+  if (notes.length > 1000 || (!approve && !notes.trim())) throw new Error('Enter Accounts remarks for rejection');
+  return { ...request, status: approve ? 'Verified' : 'Rejected', reviewNotes: notes.trim(), reviewedAt: new Date().toISOString() };
+}
 export const bankFields: { key: keyof BankDetails; label: string }[] = [
   { key: 'bankName', label: 'Bank Name' },
   { key: 'accountHolderName', label: 'Account Holder Name' },

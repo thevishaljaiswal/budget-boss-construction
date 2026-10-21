@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { bankSchema, BankDetails } from '@/lib/vendorBank';
+import React, { createContext, useContext, useState, useMemo } from 'react';
+import { BankChangeRequest, reviewBankRequest } from '@/lib/vendorBank';
 import { 
   Project, 
   BudgetItem, 
@@ -73,7 +72,9 @@ interface AppContextType {
   updateInvoicePayment: (updatedInvoicePayment: InvoicePayment) => void;
   addVendor: (vendor: Vendor) => void;
   updateVendor: (updatedVendor: Vendor) => void;
-  refreshVendorBanks: () => Promise<void>;
+  bankChangeRequests: BankChangeRequest[];
+  addBankChangeRequest: (request: BankChangeRequest) => void;
+  reviewBankChangeRequest: (id: string, approve: boolean, notes: string) => void;
   addRequestForQuotation: (rfq: RequestForQuotation) => void;
   updateRequestForQuotation: (updatedRfq: RequestForQuotation) => void;
   addRFQLineItem: (lineItem: RFQLineItem) => void;
@@ -91,30 +92,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [budgetItems, setBudgetItems] = useState<BudgetItem[]>(initialBudgetItems);
   const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>(initialPurchaseRequests);
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders);
-  const [baseVendors, setVendors] = useState<Vendor[]>(initialVendors);
-  const [vendorBanks, setVendorBanks] = useState<Record<string, BankDetails>>({});
-  const vendors = useMemo(() => baseVendors.map(vendor => ({ ...vendor, ...vendorBanks[vendor.id] })), [baseVendors, vendorBanks]);
-  const refreshVendorBanks = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (!sessionData.session) { setVendorBanks({}); return; }
-    const { data, error } = await supabase.from('vendor_bank_masters').select('vendor_id,bank_details');
-    if (error) throw new Error(error.message);
-    const banks: Record<string, BankDetails> = {};
-    for (const row of data ?? []) {
-      const parsed = bankSchema.safeParse(row.bank_details);
-      if (parsed.success) banks[row.vendor_id] = parsed.data;
-    }
-    setVendorBanks(banks);
+  const [vendors, setVendors] = useState<Vendor[]>(initialVendors);
+  const [bankChangeRequests, setBankChangeRequests] = useState<BankChangeRequest[]>([]);
+  const addBankChangeRequest = (request: BankChangeRequest) => {
+    setBankChangeRequests(current => current.some(r => r.vendorId === request.vendorId && r.status === 'Pending') ? current : [request, ...current]);
   };
-  useEffect(() => {
-    void refreshVendorBanks().catch(() => {});
-    const { data } = supabase.auth.onAuthStateChange(() => {
-      setTimeout(() => { void refreshVendorBanks().catch(() => {}); }, 0);
-    });
-    const onFocus = () => { void refreshVendorBanks().catch(() => {}); };
-    window.addEventListener('focus', onFocus);
-    return () => { data.subscription.unsubscribe(); window.removeEventListener('focus', onFocus); };
-  }, []);
+  const reviewBankChangeRequest = (id: string, approve: boolean, notes: string) => {
+    const request = bankChangeRequests.find(r => r.id === id);
+    if (!request) return;
+    const reviewed = reviewBankRequest(request, approve, notes);
+    setBankChangeRequests(current => current.map(r => r.id === id ? reviewed : r));
+    if (reviewed.status === 'Verified') setVendors(current => current.map(v => v.id === reviewed.vendorId ? { ...v, ...reviewed.details } : v));
+  };
   const [goodsReceipts, setGoodsReceipts] = useState<GoodsReceipt[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [advanceRequests, setAdvanceRequests] = useState<AdvanceRequest[]>([]);
@@ -278,7 +267,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateVendor = (updatedVendor: Vendor) => {
     setVendors(
-      baseVendors.map((vendor) =>
+      vendors.map((vendor) =>
         vendor.id === updatedVendor.id ? updatedVendor : vendor
       )
     );
@@ -369,7 +358,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateInvoicePayment,
       addVendor,
       updateVendor,
-      refreshVendorBanks,
+      bankChangeRequests,
+      addBankChangeRequest,
+      reviewBankChangeRequest,
       addRequestForQuotation,
       updateRequestForQuotation,
       addRFQLineItem,
@@ -386,6 +377,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       purchaseRequests,
       purchaseOrders,
       vendors,
+      bankChangeRequests,
       goodsReceipts,
       invoices,
       advanceRequests,
